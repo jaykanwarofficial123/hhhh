@@ -5,18 +5,19 @@ FROM n8nio/n8n:latest
 USER root
 
 # जरूरी पैकेजेस और FFmpeg को इंस्टॉल करें
-RUN apt-get update && apt-get install -y \
+RUN apk add --update \
     ffmpeg \
     curl \
-    gnupg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    gnupg
 
-# Ollama को इंस्टॉल करें
+# Ollama को इंस्टॉल करें (curl पहले ही इंस्टॉल हो चुका है)
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # वापस नोड यूजर के तौर पर स्विच करें
 USER node
+
+# Ollama के लिए वॉल्यूम सेट करें ताकि मॉडल स्थायी रहें
+VOLUME /root/.ollama
 
 # पोर्ट 11434 (Ollama) और 5678 (n8n) को उजागर करें
 EXPOSE 11434 5678
