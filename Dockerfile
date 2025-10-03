@@ -1,29 +1,20 @@
-# n8n की आधिकारिक इमेज को बेस के रूप में उपयोग करें
-FROM n8nio/n8n:latest
+# 1. Base Image: Hum official n8n image se shuru karte hain.
+FROM n8n/n8n:latest
 
-# रूट यूजर के तौर पर स्विच करें
+# 2. Privileges: FFmpeg install karne ke liye root user par switch karte hain.
 USER root
 
-# जरूरी पैकेजेस और FFmpeg को इंस्टॉल करें
-RUN apk add --update \
-    ffmpeg \
-    curl \
-    gnupg
+# 3. Installation: apt-get package manager se FFmpeg install karte hain.
+#    - apt-get update: Package lists ko update karta hai.
+#    - apt-get install -y ffmpeg: FFmpeg ko install karta hai.
+#    - rm -rf...: Temporary files ko hataakar image size chhota karta hai.
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
-# Ollama को इंस्टॉल करें (curl पहले ही इंस्टॉल हो चुका है)
-RUN curl -fsSL https://ollama.com/install.sh | sh
-
-# वापस नोड यूजर के तौर पर स्विच करें
+# 4. Security: Vaapas n8n ke default 'node' user par switch karte hain.
 USER node
 
-# Ollama के लिए वॉल्यूम सेट करें ताकि मॉडल स्थायी रहें
-VOLUME /root/.ollama
-
-# पोर्ट 11434 (Ollama) और 5678 (n8n) को उजागर करें
-EXPOSE 11434 5678
-
-# कंटेनर शुरू होने पर चलने के लिए entrypoint स्क्रिप्ट
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# 5. Command: Default n8n start command ko aise hi rehne dein.
+#    (Aapko aage Render settings mein ise override karne ki zaroorat nahi.)
+CMD ["n8n", "start"]
