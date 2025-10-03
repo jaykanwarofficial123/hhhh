@@ -1,20 +1,18 @@
 # 1. Base Image: Hum official n8n image se shuru karte hain.
 FROM n8nio/n8n:latest
 
-# 2. Privileges: FFmpeg install karne ke liye root user par switch karte hain.
+# 2. Privileges: Root user par switch karein
 USER root
 
-# 3. Installation: apt-get package manager se FFmpeg install karte hain.
-#    - apt-get update: Package lists ko update karta hai.
-#    - apt-get install -y ffmpeg: FFmpeg ko install karta hai.
-#    - rm -rf...: Temporary files ko hataakar image size chhota karta hai.
-RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    rm -rf /var/lib/apt/lists/*
+# 3. Installation: FFmpeg ko apk (Alpine's package manager) se install karein.
+#    Note: 'ffmpeg' ko install karne ke liye zaroori repositories add karna pad sakta hai.
+#    Lekin seedha 'ffmpeg' ya 'ffmpeg-dev' install karne ki koshish karein.
 
-# 4. Security: Vaapas n8n ke default 'node' user par switch karte hain.
+RUN apk update && \
+    apk add ffmpeg --no-cache
+
+# 4. Security: Vaapas default user par switch karein.
 USER node
 
 # 5. Command: Default n8n start command ko aise hi rehne dein.
-#    (Aapko aage Render settings mein ise override karne ki zaroorat nahi.)
 CMD ["n8n", "start"]
