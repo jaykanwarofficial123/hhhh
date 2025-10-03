@@ -1,5 +1,5 @@
 # 1. Base Image: Hum official n8n image se shuru karte hain.
-FROM n8n/n8n:latest
+FROM n8nio/n8n:latest
 
 # 2. Privileges: FFmpeg install karne ke liye root user par switch karte hain.
 USER root
